@@ -47,7 +47,7 @@ def run_train(config=None):
         logger = WandbCallback()
         
         # dataloaders
-        tfms = aug_transforms()
+        # tfms = aug_transforms()
         dls = SegmentationDataLoaders.from_label_func(
             path, 
             bs=config.batch_size, 
@@ -56,7 +56,7 @@ def run_train(config=None):
             codes = codes, 
             item_tfms = Resize((720//config.resize_factor, 
                                 960//config.resize_factor)),
-            batch_tfms = tfms,
+            # batch_tfms = tfms,
         )
 
         # model
