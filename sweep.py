@@ -44,7 +44,7 @@ config = {"arch": "resnet34",
 def run_train(config=None):
     with wandb.init(config=config):
         config = wandb.config
-        logger = WandbCallback()
+        logger = WandbCallback(log_preds=False)
         
         # dataloaders
         # tfms = aug_transforms()
@@ -71,10 +71,6 @@ def run_train(config=None):
                              cbs = cbs)
         learn.fine_tune(10, base_lr=config.lr)
         
-        table = create_table(*get_preds(learn))
-        
-        wandb.log({"Predictions":table})
-
 sweep_config = {
     'method': 'bayes',
     'metric': {
@@ -88,10 +84,10 @@ parameters = {
     'lr': {# a flat distribution between 0 and 0.1
             'distribution': 'uniform',
             'min': 0,
-            'max': 0.1
+            'max': 0.01
       },
     'batch_size': {
-        "values": [8,16,32]
+        "values": [4, 8, 16]
     },
     'arch':{
         "values": ["resnet34", "xresnet34", "xresnext34"]
@@ -104,6 +100,7 @@ parameters = {
     }
 }
 
+sweep_config["parameters"] = parameters
 sweep_config["parameters"] = parameters
 
 sweep_id = wandb.sweep(sweep_config, 
