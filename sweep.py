@@ -5,8 +5,7 @@ import fastai
 from fastai.vision.all import *
 from fastai.callback.wandb import WandbCallback
 
-set_seed(2022)
-
+SEED = 2022
 
 path = untar_data(URLs.CAMVID)
 
@@ -48,12 +47,14 @@ def run_train(config=None):
         
         # dataloaders
         # tfms = aug_transforms()
+        set_seed(SEED)
         dls = SegmentationDataLoaders.from_label_func(
             path, 
             bs=config.batch_size, 
             fnames = fnames, 
             label_func = label_func, 
             codes = codes, 
+            seed = SEED,
             item_tfms = Resize((720//config.resize_factor, 
                                 960//config.resize_factor)),
             # batch_tfms = tfms,
@@ -104,7 +105,7 @@ sweep_config["parameters"] = parameters
 sweep_config["parameters"] = parameters
 
 sweep_id = wandb.sweep(sweep_config, 
-                       project="camvid", 
+                       project="CamVid", 
                        entity="hydranet")
 
 wandb.agent(sweep_id, run_train, count=30)
